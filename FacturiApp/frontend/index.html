@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Facturi - Frontend monolit</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- ecran auth -->
+    <div class="auth-wrap" v-if="!autentificat">
+      <div class="auth-card">
+        <div class="auth-logo"><i class="fa-solid fa-file-invoice"></i></div>
+        <h1 class="auth-titlu">Aplicatie Facturi</h1>
+
+        <div v-if="authMode === 'login'">
+          <p class="auth-subtitlu">Intra in cont</p>
+          <input v-model="loginForm.username" placeholder="Utilizator" />
+          <input v-model="loginForm.password" type="password" placeholder="Parola" @keyup.enter="login" />
+          <button class="auth-btn" @click="login">
+            <i class="fa-solid fa-right-to-bracket"></i> Autentificare
+          </button>
+
+          <div class="auth-jos">
+            <a href="#" @click.prevent="schimbaMod('reset')">Am uitat parola</a>
+          </div>
+          <div class="auth-jos">
+            Nu ai cont?
+            <a href="#" @click.prevent="schimbaMod('register')">Creeaza unul aici</a>
+          </div>
+        </div>
+
+        <div v-else-if="authMode === 'register'">
+          <p class="auth-subtitlu">Creeaza cont nou</p>
+          <input v-model="registerForm.username" placeholder="Utilizator" />
+          <input v-model="registerForm.nume" placeholder="Nume complet" />
+          <input v-model="registerForm.email" type="email" placeholder="Email" />
+          <input v-model="registerForm.password" type="password" placeholder="Parola" @keyup.enter="register" />
+          <button class="auth-btn" @click="register">
+            <i class="fa-solid fa-user-plus"></i> Inregistrare
+          </button>
+
+          <div class="auth-jos">
+            Ai deja cont?
+            <a href="#" @click.prevent="schimbaMod('login')">Autentifica-te</a>
+          </div>
+        </div>
+
+        <div v-else>
+          <p class="auth-subtitlu">Reseteaza parola</p>
+          <input v-model="resetForm.username" placeholder="Utilizator" />
+          <input v-model="resetForm.email" type="email" placeholder="Email-ul contului" />
+          <input v-model="resetForm.nouaParola" type="password" placeholder="Parola noua" @keyup.enter="resetParola" />
+          <button class="auth-btn" @click="resetParola">
+            <i class="fa-solid fa-key"></i> Schimba parola
+          </button>
+
+          <div class="auth-jos">
+            <a href="#" @click.prevent="schimbaMod('login')">Inapoi la autentificare</a>
+          </div>
+        </div>
+
+        <p class="auth-mesaj" v-if="authMesaj">{{ authMesaj }}</p>
+      </div>
+    </div>
+
+    <!-- aplicatie dupa login -->
+    <div v-else>
+      <header class="topbar">
+        <h1>Aplicatie Facturi (monolit)</h1>
+        <button class="user-btn" @click="drawerOpen = true" title="Cont">
+          <i class="fa-solid fa-user"></i>
+        </button>
+      </header>
+
+      <nav>
+        <button @click="pagina = 'produse'" :class="{ activ: pagina === 'produse' }">Produse</button>
+        <button @click="pagina = 'clienti'" :class="{ activ: pagina === 'clienti' }">Clienti</button>
+        <button @click="pagina = 'facturi'" :class="{ activ: pagina === 'facturi' }">Facturi</button>
+        <button @click="pagina = 'plati'"   :class="{ activ: pagina === 'plati' }">Plati</button>
+      </nav>
+
+      <p class="mesaj" v-if="mesaj">{{ mesaj }}</p>
+
+      <div class="box" v-if="pagina === 'produse'">
+        <h2>Produse</h2>
+        <div>
+          <label>Nume:</label>
+          <input v-model="produsNou.numeProdus" placeholder="ex: Paine" /><br />
+          <label>Pret:</label>
+          <input v-model.number="produsNou.pretUnitar" type="number" placeholder="ex: 3.5" /><br />
+          <label>Unitate:</label>
+          <input v-model="produsNou.unitateMasura" placeholder="ex: buc" /><br />
+          <button @click="adaugaProdus">Adauga produs</button>
+        </div>
+        <table>
+          <tr><th>Id</th><th>Nume</th><th>Pret</th><th>Unitate</th></tr>
+          <tr v-for="p in produse" :key="p.idProdus">
+            <td>{{ p.idProdus }}</td>
+            <td>{{ p.numeProdus }}</td>
+            <td>{{ p.pretUnitar }}</td>
+            <td>{{ p.unitateMasura }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="box" v-if="pagina === 'clienti'">
+        <h2>Clienti</h2>
+        <div>
+          <label>Nume:</label>
+          <input v-model="clientNou.numeClient" placeholder="ex: Popescu Ion" /><br />
+          <label>Email:</label>
+          <input v-model="clientNou.email" placeholder="ex: ion@mail.ro" /><br />
+          <label>Telefon:</label>
+          <input v-model="clientNou.telefon" placeholder="ex: 07xx" /><br />
+          <label>Adresa:</label>
+          <input v-model="clientNou.adresa" placeholder="ex: Str. X" /><br />
+          <button @click="adaugaClient">Adauga client</button>
+        </div>
+        <table>
+          <tr><th>Id</th><th>Nume</th><th>Email</th><th>Telefon</th><th>Adresa</th><th></th></tr>
+          <tr v-for="c in clienti" :key="c.idClient">
+            <td>{{ c.idClient }}</td>
+            <td>{{ c.numeClient }}</td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.telefon }}</td>
+            <td>{{ c.adresa }}</td>
+            <td><button class="btn-rosu" @click="stergeClient(c.idClient)">Sterge</button></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="box" v-if="pagina === 'facturi'">
+        <h2>Creeaza factura</h2>
+
+        <label>Client:</label>
+        <select v-model.number="facturaNoua.idClient">
+          <option :value="0" disabled>-- alege client --</option>
+          <option v-for="c in clienti" :key="c.idClient" :value="c.idClient">{{ c.numeClient }}</option>
+        </select>
+        <br />
+
+        <label>Produs:</label>
+        <select v-model.number="produsSelectat">
+          <option :value="0" disabled>-- alege produs --</option>
+          <option v-for="p in produse" :key="p.idProdus" :value="p.idProdus">
+            {{ p.numeProdus }} ({{ p.pretUnitar }} lei)
+          </option>
+        </select>
+        <label>Cantitate:</label>
+        <input v-model.number="cantitateSelectata" type="number" min="1" class="input-mic" />
+        <button @click="adaugaLinie">+ Adauga produs in factura</button>
+
+        <table v-if="facturaNoua.produseFactura.length">
+          <tr><th>Produs</th><th>Pret</th><th>Cantitate</th><th>Subtotal</th></tr>
+          <tr v-for="(l, i) in facturaNoua.produseFactura" :key="i">
+            <td>{{ l.denumire }}</td>
+            <td>{{ l.pretUnitar }}</td>
+            <td>{{ l.cantitate }}</td>
+            <td>{{ l.pretUnitar * l.cantitate }}</td>
+          </tr>
+          <tr><td colspan="3"><b>TOTAL</b></td><td><b>{{ totalFactura }}</b></td></tr>
+        </table>
+
+        <br />
+        <label>Observatii:</label>
+        <input v-model="facturaNoua.observatii" placeholder="optional" />
+        <br />
+
+        <button
+          :disabled="facturaNoua.idClient === 0 || facturaNoua.produseFactura.length === 0"
+          @click="creeazaFactura">
+          Creeaza factura
+        </button>
+        <small v-if="facturaNoua.idClient === 0"> (alege intai un client)</small>
+
+        <hr />
+
+        <h2>Vezi facturi</h2>
+        <button @click="incarcaFacturi">Toate facturile</button>
+        <label> sau per client:</label>
+        <select v-model.number="filtruClient" @change="incarcaFacturiClient">
+          <option :value="0" disabled>-- alege client --</option>
+          <option v-for="c in clienti" :key="c.idClient" :value="c.idClient">{{ c.numeClient }}</option>
+        </select>
+
+        <table v-if="facturi.length">
+          <tr><th>Nr</th><th>Client</th><th>Data</th><th>Produse</th><th>Total</th><th>Observatii</th></tr>
+          <tr v-for="f in facturi" :key="f.nrFactura">
+            <td>{{ f.nrFactura }}</td>
+            <td>{{ f.client ? f.client.numeClient : '(client ' + f.idClient + ')' }}</td>
+            <td>{{ (f.dataFactura || '').substring(0, 10) }}</td>
+            <td>
+              <span v-for="(l, i) in f.produseFactura" :key="i">{{ l.denumire }} x{{ l.cantitate }}; </span>
+            </td>
+            <td>{{ totalFacturii(f) }} lei</td>
+            <td>{{ f.observatii }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="box" v-if="pagina === 'plati'">
+        <h2>Inregistreaza plata</h2>
+        <label>Nr factura:</label>
+        <input v-model.number="plataNoua.nrFactura" type="number" placeholder="ex: 1" /><br />
+        <label>Suma:</label>
+        <input v-model.number="plataNoua.suma" type="number" placeholder="ex: 17" /><br />
+        <label>Metoda:</label>
+        <select v-model="plataNoua.metodaPlata">
+          <option>numerar</option>
+          <option>card</option>
+          <option>transfer</option>
+        </select><br />
+        <label>Status:</label>
+        <select v-model="plataNoua.status">
+          <option>Platita</option>
+          <option>In asteptare</option>
+          <option>Anulata</option>
+        </select><br />
+        <button @click="adaugaPlata">Inregistreaza plata</button>
+
+        <hr />
+        <h2>Plati</h2>
+        <button @click="incarcaPlati">Reincarca lista</button>
+        <table v-if="plati.length">
+          <tr><th>Id</th><th>Nr factura</th><th>Client</th><th>Suma</th><th>Data</th><th>Metoda</th><th>Status</th></tr>
+          <tr v-for="pl in plati" :key="pl.idPlata">
+            <td>{{ pl.idPlata }}</td>
+            <td>{{ pl.nrFactura }}</td>
+            <td>{{ clientPlatii(pl) }}</td>
+            <td>{{ pl.suma }}</td>
+            <td>{{ (pl.dataPlata || '').substring(0, 10) }}</td>
+            <td>{{ pl.metodaPlata }}</td>
+            <td>{{ pl.status }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- drawerul cu contu -->
+      <div class="drawer-overlay" v-if="drawerOpen" @click="drawerOpen = false"></div>
+      <aside class="drawer" :class="{ deschis: drawerOpen }">
+        <div class="drawer-cap">
+          <span>Cont</span>
+          <button class="drawer-x" @click="drawerOpen = false"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="drawer-user">
+          <i class="fa-solid fa-circle-user"></i>
+          <div>
+            <strong>{{ username }}</strong>
+            <small>Autentificat</small>
+          </div>
+        </div>
+        <button class="drawer-logout" @click="logout">
+          <i class="fa-solid fa-right-from-bracket"></i> Log out
+        </button>
+      </aside>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

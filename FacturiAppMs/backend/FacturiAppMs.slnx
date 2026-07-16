@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="AuthService/AuthService.csproj" />
+  <Project Path="ClientService/ClientService.csproj" />
+  <Project Path="FacturaService/FacturaService.csproj" />
+  <Project Path="PlatiService/PlatiService.csproj" />
+  <Project Path="ProdusService/ProdusService.csproj" />
+</Solution>

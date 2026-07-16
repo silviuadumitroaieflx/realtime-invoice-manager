@@ -1,0 +1,6 @@
+@PlatiService_HostAddress = http://localhost:5150
+
+GET {{PlatiService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

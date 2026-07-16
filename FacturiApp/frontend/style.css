@@ -1,0 +1,240 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #fff;
+  color: #000;
+}
+
+h1 {
+  font-size: 22px;
+}
+
+h2 {
+  font-size: 18px;
+  margin-top: 0;
+}
+
+nav button {
+  padding: 8px 14px;
+  margin-right: 6px;
+  cursor: pointer;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+nav button.activ {
+  background: #000;
+  color: #fff;
+}
+
+.box {
+  border: 1px solid #000;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 8px;
+}
+
+th, td {
+  border: 1px solid #000;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+input, select {
+  padding: 5px;
+  margin: 3px 0;
+  border: 1px solid #000;
+}
+
+.input-mic {
+  width: 60px;
+}
+
+label {
+  display: inline-block;
+  min-width: 90px;
+}
+
+button {
+  padding: 7px 12px;
+  cursor: pointer;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+.btn-rosu {
+  background: #fff;
+}
+
+.mesaj {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #000;
+}
+
+/* ============ ECRAN AUTENTIFICARE ============ */
+.auth-wrap {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 320px;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 28px 26px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  text-align: center;
+}
+
+.auth-logo {
+  font-size: 38px;
+  margin-bottom: 6px;
+}
+
+.auth-titlu {
+  font-size: 20px;
+  margin: 0 0 2px;
+}
+
+.auth-subtitlu {
+  color: #555;
+  margin: 0 0 16px;
+}
+
+.auth-card input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+}
+
+.auth-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 11px;
+  background: #000;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.auth-jos {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #555;
+}
+
+.auth-jos a {
+  color: #000;
+  font-weight: bold;
+}
+
+.auth-mesaj {
+  margin-top: 14px;
+  font-weight: bold;
+}
+
+/* ============ TOPBAR + ICONITA USER ============ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-btn:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* ============ DRAWER LATERAL ============ */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 260px;
+  height: 100%;
+  background: #fff;
+  border-left: 1px solid #000;
+  box-shadow: -6px 0 18px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 11;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.drawer.deschis {
+  transform: translateX(0);
+}
+
+.drawer-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+  padding-bottom: 10px;
+}
+
+.drawer-x {
+  border: none;
+  background: none;
+  font-size: 18px;
+}
+
+.drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.drawer-user i {
+  font-size: 40px;
+}
+
+.drawer-user small {
+  display: block;
+  color: #2e7d32;
+}
+
+.drawer-logout {
+  width: 100%;
+  padding: 11px;
+  background: #000;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 15px;
+}

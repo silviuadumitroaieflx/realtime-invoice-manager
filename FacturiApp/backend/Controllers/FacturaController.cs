@@ -1,11 +1,13 @@
 using FacturiApp.Data;
 using FacturiApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FacturiApp.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]/[action]")]
 public class FacturaController : ControllerBase
 {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlatiService.Data;
@@ -7,6 +8,7 @@ using PlatiService.Services;
 namespace PlatiService.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]/[action]")]
 public class PlataController : ControllerBase
 {
@@ -34,7 +36,7 @@ public class PlataController : ControllerBase
             return NotFound($"Plata cu id-ul {id} nu a fost gasita.");
 
         // adauga datele facturii prin HTTP din FacturaService
-        plata.Factura = await _facturaApi.GetFacturaByNr(plata.NrFactura);
+        plata.Factura = await _facturaApi.GetFacturaByNr(plata.NrFactura, Request.Headers.Authorization);
         return Ok(plata);
     }
 
@@ -54,7 +56,7 @@ public class PlataController : ControllerBase
     public async Task<ActionResult> PostPlata([FromBody] PlataEntity plata)
     {
         // valideaza ca factura exista in FacturaService inainte de a inregistra plata
-        var factura = await _facturaApi.GetFacturaByNr(plata.NrFactura);
+        var factura = await _facturaApi.GetFacturaByNr(plata.NrFactura, Request.Headers.Authorization);
         if (factura == null)
             return BadRequest($"Factura cu numarul {plata.NrFactura} nu exista in FacturaService.");
 

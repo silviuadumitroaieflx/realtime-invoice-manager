@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProdusService.Data;
@@ -6,6 +7,7 @@ using ProdusService.Models;
 namespace ProdusService.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]/[action]")]
 public class ProdusController : ControllerBase
 {

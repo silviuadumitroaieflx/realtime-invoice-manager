@@ -1,12 +1,14 @@
 using FacturaService.Data;
 using FacturaService.Models;
 using FacturaService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FacturaService.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]/[action]")]
 public class FacturaController : ControllerBase
 {
@@ -27,7 +29,7 @@ public class FacturaController : ControllerBase
             .ToListAsync();
 
         foreach (var factura in lista)
-            factura.Client = await _clientApi.GetClientById(factura.IdClient);
+            factura.Client = await _clientApi.GetClientById(factura.IdClient, Request.Headers.Authorization);
 
         return Ok(lista);
     }
@@ -42,7 +44,7 @@ public class FacturaController : ControllerBase
         if (factura == null)
             return NotFound($"Factura cu numarul {nrFactura} nu a fost gasita.");
 
-        factura.Client = await _clientApi.GetClientById(factura.IdClient);
+        factura.Client = await _clientApi.GetClientById(factura.IdClient, Request.Headers.Authorization);
         return Ok(factura);
     }
 
@@ -58,7 +60,7 @@ public class FacturaController : ControllerBase
             return NotFound($"Nu s-au gasit facturi pentru clientul cu id-ul {idClient}.");
 
         foreach (var factura in facturi)
-            factura.Client = await _clientApi.GetClientById(factura.IdClient);
+            factura.Client = await _clientApi.GetClientById(factura.IdClient, Request.Headers.Authorization);
 
         return Ok(facturi);
     }

@@ -1,6 +1,7 @@
 using ClientService.Data;
 using ClientService.Hubs;
 using ClientService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClientService.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]/[action]")]
 public class ClientController : ControllerBase
 {
@@ -70,6 +72,7 @@ public class ClientController : ControllerBase
         existing.Adresa = client.Adresa;
 
         await _db.SaveChangesAsync();
+        await _hub.Clients.All.SendAsync("ClientiModificati", "modificat: " + existing.NumeClient);
         return Ok("Client actualizat cu succes!");
     }
 
